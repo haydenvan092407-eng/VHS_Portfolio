@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VHS Studios — Photography &amp; Filmmaking</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="logo"><img src="images/vhs-logo.png" alt="VHS Studios"></a>
+    <nav class="main-nav">
+      <a href="index.html" class="active">Home</a>
+      <a href="projects.html">Projects</a>
+      <a href="services.html">Services</a>
+      <a href="about.html">About</a>
+      <a href="skills.html">Skills</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="nav-right">
+      <span class="rec-badge"><span class="rec-dot"></span>REC <span class="rec-time">00:00:00</span></span>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-slides" id="heroSlides" aria-hidden="true">
+      <figure class="hero-slide" data-title="Sca(n)(m)" data-category="Short Film · 2026" data-href="films.html">
+        <img src="images/hero/hero-01.png" alt="">
+      </figure>
+      <figure class="hero-slide" data-title="CSCSOC Photoshoot" data-category="Photography" data-href="photography.html">
+        <img src="images/hero/hero-02.jpg" alt="">
+      </figure>
+      <figure class="hero-slide" data-title="About You" data-category="Music Video" data-href="films.html">
+        <img src="images/hero/hero-03.png" alt="">
+      </figure>
+      <figure class="hero-slide" data-title="Street Photography" data-category="Street" data-href="photography.html">
+        <img src="images/hero/hero-04.jpg" alt="">
+      </figure>
+      <div class="hero-flicker"></div>
+    </div>
+    <div class="container">
+      <div class="hero-tape">
+        <span>SP · 00:00:12:04</span>
+        <span>PLAY ▸</span>
+        <span>CH 04</span>
+      </div>
+      <h1 class="glitch" data-text="VHS STUDIOS">
+        <small>Photography &amp; Filmmaking Portfolio</small>
+        VHS STUDIOS
+      </h1>
+      <p class="hero-sub">I shoot photos and produce films — event coverage, portraits, short films, and music videos, from filming through final edit.</p>
+      <div class="hero-actions">
+        <a href="projects.html" class="btn btn-solid">View the work</a>
+        <a href="contact.html" class="btn">Start a project</a>
+      </div>
+    </div>
+    <div class="hero-controls">
+      <a class="hero-caption empty" id="heroCaption">
+        <span class="cap-label">Featured project <b class="cap-idx"></b></span>
+        <span class="cap-title"></span>
+        <span class="cap-meta"></span>
+      </a>
+      <div class="hero-nav">
+        <button type="button" class="hero-arrow" id="heroPrev" aria-label="Previous project">←</button>
+        <div class="hero-dots" id="heroDots"></div>
+        <button type="button" class="hero-arrow" id="heroNext" aria-label="Next project">→</button>
+      </div>
+    </div>
+    <div class="scroll-cue"><span class="bar"></span>SCROLL</div>
+  </section>
+
+  <section class="section" style="padding-top:90px;">
+    <div class="container reveal">
+      <span class="eyebrow">Two disciplines, one studio</span>
+      <div class="split-grid" style="margin-top:30px;">
+        <a href="photography.html" class="split-card photo">
+          <div>
+            <span class="tag">01 — Stills</span>
+            <h3 class="glitch" data-text="Photography">Photography</h3>
+          </div>
+          <span class="arrow">Browse the gallery →</span>
+        </a>
+        <a href="films.html" class="split-card film">
+          <div>
+            <span class="tag">02 — Motion</span>
+            <h3 class="glitch" data-text="Films">Films</h3>
+          </div>
+          <span class="arrow">Watch the showcase →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container reveal">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">What I offer</span>
+          <h2>Photography and film services, from a single session to full production.</h2>
+        </div>
+        <a href="services.html" class="btn btn-ghost">All services</a>
+      </div>
+      <div class="strip-list">
+        <div class="strip-item">
+          <span class="num">01</span>
+          <span class="name">Portrait &amp; Editorial</span>
+          <span class="desc">Portrait sessions on location or in a simple studio setup.</span>
+        </div>
+        <div class="strip-item">
+          <span class="num">02</span>
+          <span class="name">Event Coverage</span>
+          <span class="desc">Photo or video coverage for events and organizations.</span>
+        </div>
+        <div class="strip-item">
+          <span class="num">03</span>
+          <span class="name">Short Film &amp; Music Video</span>
+          <span class="desc">Directing, filming, and editing narrative and music work.</span>
+        </div>
+        <div class="strip-item">
+          <span class="num">04</span>
+          <span class="name">Post-Production</span>
+          <span class="desc">Editing and colour grading for footage you've already shot.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <div class="container reveal">
+      <span class="eyebrow">Currently booking</span>
+      <h2>Have a shoot in mind? Get in touch.</h2>
+      <a href="contact.html" class="btn btn-solid">Get in touch</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a href="index.html" class="footer-logo"><img src="images/vhs-logo.png" alt="VHS Studios"></a>
+        <p style="color:var(--text-dim); font-size:14px; max-width:280px; margin-top:16px;">A minimalist photography and filmmaking studio.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Site</h4>
+          <a href="projects.html">Projects</a>
+          <a href="services.html">Services</a>
+          <a href="about.html">About</a>
+          <a href="skills.html">Skills</a>
+        </div>
+        <div class="footer-col">
+          <h4>Work</h4>
+          <a href="photography.html">Photography</a>
+          <a href="films.html">Films</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <a href="https://www.instagram.com/heyyden.arw/" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://youtube.com/@vhsstudioproduction" target="_blank" rel="noopener">YouTube</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 VHS STUDIOS. ALL RIGHTS RESERVED.</span>
+      <span>REC · SP MODE · NO TAPE LIMIT</span>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
