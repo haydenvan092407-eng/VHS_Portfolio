@@ -282,7 +282,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .hero{
   position:relative;
   min-height:100svh;
-  display:flex; flex-direction:column; justify-content:center;
+  display:flex; flex-direction:column; justify-content: space-between;
   padding:120px 0 60px;
   overflow:hidden;
 }
@@ -316,13 +316,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   display:block;
   font-family:var(--font-mono);
   font-size:clamp(13px,1.6vw,17px);
-  color:var(--text-dim);
+  color: rgba(242, 241, 236, 0.85);
   letter-spacing:.14em;
   text-transform:uppercase;
   margin-bottom:14px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
 }
 .hero-sub{
-  max-width:560px; margin-top:26px; color:var(--text-dim); font-size:18px;
+  max-width:560px; margin-top:26px; color:var(--text-dim); font-size:18px; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
 }
 .hero-actions{ display:flex; gap:16px; margin-top:44px; flex-wrap:wrap; }
 .scroll-cue{
@@ -646,8 +647,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .hero-slides::after{
   content:""; position:absolute; inset:0; z-index:2;
   background:
-    linear-gradient(90deg, rgba(10,10,10,.82) 0%, rgba(10,10,10,.45) 55%, rgba(10,10,10,.2) 100%),
-    linear-gradient(180deg, rgba(10,10,10,.35) 0%, rgba(10,10,10,.15) 40%, var(--bg) 100%);
+    linear-gradient(90deg, rgba(10, 10, 10, 0.92) 0%, rgba(10, 10, 10, 0.7) 50%, rgba(10, 10, 10, 0.35) 100%),
+    linear-gradient(180deg, rgba(10, 10, 10, 0.6) 0%, rgba(10, 10, 10, 0.3) 50%, var(--bg) 100%); 
 }
 /* tape tracking flicker on slide change */
 .hero-flicker{ position:absolute; inset:0; z-index:3; opacity:0;
@@ -768,7 +769,9 @@ img,video,iframe{ max-width:100%; }
       linear-gradient(180deg, rgba(10,10,10,.55) 0%, rgba(10,10,10,.7) 55%, var(--bg) 100%);
   }
 
-  .split-card{ padding:32px 24px; min-height:240px; }
+  .split-card{ padding:32px 24px; min-height:240px; background: var(--surface);}
+  .split-card::before {opacity: 0.35;}
+  .split-card .arrow {gap: 16px;color: var(--text);}
   .split-card h3{ font-size:clamp(26px,8vw,34px); }
   .skill-col{ padding:34px 22px; }
   .portal-card{ min-height:340px; padding:26px; }
