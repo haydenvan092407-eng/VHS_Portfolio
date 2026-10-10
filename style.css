@@ -9,23 +9,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root{
-  /* ---- LIGHT THEME (default): warm off-white, soft gray lines, charcoal text ---- */
-  --bg:#f6f3ec;
-  --bg-alt:#efebe2;
-  --surface:#fbf9f4;
-  --surface-2:#ebe6db;
-  --line:#d6d0c3;
-  --line-soft:#e4dfd3;
-  --text:#1f1e1a;
-  --text-dim:#5c5a52;
-  --text-faint:#726f65;
-  --bg-rgb:246,243,236;           /* used for translucent overlays */
+  /* ---- WARM CREAM / OFF-WHITE THEME ---- */
+  --bg:#f2ece1;                 
+  --bg-alt:#e8e1d4;             
+  --surface:#f9f5ed;             
+  --surface-2:#e1d9ca;       
+  --line:#d5ccbd;                
+  --line-soft:#e2dad0;         
+  --text:#1f1e1a;                 
+  --text-dim:#5c5a52;             
+  --text-faint:#726f65;         
+  --bg-rgb:242,236,225;          
   --text-rgb:31,30,26;
-  /* accent colours stay the same in both themes */
+  
+  /* Accents */
   --magenta:#ff2f6e;
   --cyan:#21e6ff;
   --violet:#a239ff;
-  /* darker accent shades for small TEXT on light backgrounds (readability) */
   --magenta-text:#c91650;
   --cyan-text:#0b7285;
   --focus:#0b7285;
@@ -33,10 +33,10 @@
   --hero-shadow:none;
   --hero-kicker:var(--text);
   --btn-solid-hover:#57554d;
-  --btn-solid-hover-text:#f6f3ec;
+  --btn-solid-hover-text:#f2ece1;
   --overlay-svc:rgba(38,34,28,.55);
   --shadow-pop:0 24px 60px rgba(60,50,35,.18);
-  --media-bg:#151513;             /* image / poster placeholders stay dark in both themes */
+  --media-bg:#151513;             
   --grad: linear-gradient(115deg,#ff2f6e 0%, #a239ff 48%, #21e6ff 100%);
   --font-display:'Archivo Black', 'Arial Black', sans-serif;
   --font-body:'Inter', system-ui, sans-serif;
@@ -155,16 +155,29 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   display:flex; align-items:center; justify-content:space-between;
   height:74px;
 }
+.logo img {
+  filter: invert(1) brightness(0.2);
+}
+html[data-theme="dark"] .logo img {
+  filter: none;
+}
 .logo{
   font-family:var(--font-display);
   font-size:18px;
   letter-spacing:.02em;
   display:flex; align-items:baseline; gap:2px;
 }
+
 .logo span{ color:var(--magenta); }
 .logo img{ height:26px; width:auto; display:block; }
 .footer-logo img{ height:34px; width:auto; display:block; }
+.footer-logo img {
+  filter: invert(1) brightness(0.2);
+}
 
+html[data-theme="dark"] .footer-logo img {
+  filter: none;
+}
 .rec-badge{
   font-family:var(--font-mono);
   font-size:11px;
