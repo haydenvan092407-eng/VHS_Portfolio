@@ -1,10 +1,54 @@
 /* ============================================================
    VHS STUDIOS — shared script
-   (mobile nav, scroll reveal, skill bars, REC timer,
+   (theme toggle, mobile nav, scroll reveal, REC timer,
     video modal, hero slideshow)
    ============================================================ */
 (function () {
   'use strict';
+
+
+  /* ---------- theme toggle (light / dark) ---------- */
+  // the saved theme was already applied by the small script in each page's <head>
+  var themeBtn = document.querySelector('.theme-toggle');
+  var themeMeta = document.querySelector('meta[name="theme-color"]');
+  var themeTimer = null;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // keep the button label (for screen readers) matching the current theme
+  var updateThemeLabel = function () {
+    if (!themeBtn) return;
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var label = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+    themeBtn.setAttribute('aria-label', label);
+    themeBtn.setAttribute('title', label);
+  };
+  updateThemeLabel();
+
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function () {
+      var root = document.documentElement;
+      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      // short-lived class that makes the colours fade smoothly
+      if (!reduceMotion) {
+        root.classList.add('theme-anim');
+        clearTimeout(themeTimer);
+        themeTimer = setTimeout(function () { root.classList.remove('theme-anim'); }, 450);
+      }
+      root.setAttribute('data-theme', next);
+      if (themeMeta) themeMeta.setAttribute('content', next === 'dark' ? '#0a0a0a' : '#f6f3ec');
+      try { localStorage.setItem('vhs-theme', next); } catch (e) { /* storage blocked */ }
+      updateThemeLabel();
+    });
+  }
+
+  // if the theme is changed in another tab, follow it
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'vhs-theme' && (e.newValue === 'dark' || e.newValue === 'light')) {
+      document.documentElement.setAttribute('data-theme', e.newValue);
+      if (themeMeta) themeMeta.setAttribute('content', e.newValue === 'dark' ? '#0a0a0a' : '#f6f3ec');
+      updateThemeLabel();
+    }
+  });
 
   /* ---------- mobile nav ---------- */
   var toggle = document.querySelector('.nav-toggle');

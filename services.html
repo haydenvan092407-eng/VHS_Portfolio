@@ -8,7 +8,58 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#0a0a0a">
+<script>
+/* apply the saved theme BEFORE the page paints (prevents a flash of the wrong theme). Default = light. */
+var vhsTheme = 'light';
+try {
+  var vhsSaved = localStorage.getItem('vhs-theme');
+  if (vhsSaved === 'dark' || vhsSaved === 'light') { vhsTheme = vhsSaved; }
+} catch (e) { /* storage blocked: stay on light */ }
+document.documentElement.setAttribute('data-theme', vhsTheme);
+var vhsMeta = document.querySelector('meta[name="theme-color"]');
+if (vhsMeta) { vhsMeta.setAttribute('content', vhsTheme === 'dark' ? '#0a0a0a' : '#f6f3ec'); }
+</script>
 <link rel="stylesheet" href="style.css">
+<style>
+  /* clickable service cards */
+  .service-card{ cursor:pointer; transition:background .3s var(--ease), padding-left .3s var(--ease); }
+  .service-card:hover, .service-card:focus-visible{ background:var(--bg-alt); padding-left:14px; outline:none; }
+  .service-card .meta .hint{ color:var(--magenta-text); }
+
+  /* popup */
+  .svc-modal{ position:fixed; inset:0; z-index:700; background:var(--overlay-svc); display:flex; align-items:flex-start; justify-content:center; padding:48px 20px; overflow-y:auto; opacity:0; pointer-events:none; transition:opacity .3s var(--ease); }
+  .svc-modal.open{ opacity:1; pointer-events:auto; }
+  .svc-panel{ position:relative; width:100%; max-width:860px; background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow-pop); padding:44px; transform:translateY(24px); transition:transform .4s var(--ease); }
+  .svc-modal.open .svc-panel{ transform:translateY(0); }
+  .svc-close{ position:absolute; top:14px; right:14px; width:38px; height:38px; background:transparent; border:1px solid var(--line); color:var(--text); font-size:16px; cursor:pointer; transition:.3s var(--ease); }
+  .svc-close:hover{ border-color:var(--magenta); color:var(--magenta-text); background:var(--surface-2); }
+  .svc-panel h2{ font-size:clamp(26px,4vw,40px); margin:12px 0 28px; }
+
+  /* sample grid */
+  .svc-samples{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:30px; }
+  .svc-samples.two{ grid-template-columns:repeat(2,1fr); }
+  .svc-sample{ position:relative; overflow:hidden; background:var(--bg-alt); border:1px solid var(--line-soft); aspect-ratio:4/5; }
+  .svc-samples.video .svc-sample{ aspect-ratio:16/9; cursor:pointer; }
+  .svc-sample img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .svc-sample iframe{ width:100%; height:100%; border:0; display:block; }
+  .svc-sample .play{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:52px; height:52px; border-radius:50%; background:rgba(10,10,10,.7); color:#f2f1ec; border:1px solid #f2f1ec; display:flex; align-items:center; justify-content:center; font-size:16px; transition:.3s var(--ease); }
+  .svc-samples.video .svc-sample:hover .play{ background:var(--magenta); border-color:var(--magenta); color:#0a0a0a; }
+  .svc-sample .cap{ position:absolute; left:10px; bottom:8px; font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:#f2f1ec; text-shadow:0 1px 4px #000; }
+
+  /* text + info */
+  .svc-desc{ color:var(--text-dim); font-size:15px; max-width:640px; margin-bottom:26px; }
+  .svc-info{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; border-top:1px solid var(--line); margin-bottom:30px; }
+  .svc-info div{ padding:16px 0; border-bottom:1px solid var(--line-soft); }
+  .svc-info span{ display:block; font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); margin-bottom:6px; }
+  .svc-info b{ font-family:var(--font-mono); font-size:13px; font-weight:400; }
+  .svc-skills-title{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); margin-bottom:6px; }
+  .svc-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+  @media (max-width:640px){
+    .svc-panel{ padding:34px 18px 24px; }
+    .svc-info{ grid-template-columns:1fr; }
+    .svc-actions .btn{ flex:1 1 100%; justify-content:center; }
+  }
+</style>
 </head>
 <body>
 
@@ -25,6 +76,10 @@
     </nav>
     <div class="nav-right">
       <span class="rec-badge"><span class="rec-dot"></span>REC <span class="rec-time">00:00:00</span></span>
+      <button type="button" class="theme-toggle" aria-label="Switch color theme" title="Switch color theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span></button>
     </div>
   </div>
@@ -42,45 +97,45 @@
   <section class="section reveal" style="border-bottom:none;">
     <div class="container">
       <div class="service-list">
-        <div class="service-card">
+        <div class="service-card" data-service="portrait" tabindex="0" role="button" aria-label="View details: Portrait and Editorial">
           <span class="num">01</span>
           <div>
             <h3>Portrait &amp; Editorial</h3>
             <p>Portrait sessions on location or in a simple studio setup.</p>
           </div>
-          <div class="meta">STILLS<br>UP TO 7 HRS<br>8HR EDIT</div>
+          <div class="meta">STILLS<br>UP TO 7 HRS<br>8HR EDIT<br><span class="hint">VIEW DETAILS +</span></div>
         </div>
-        <div class="service-card">
+        <div class="service-card" data-service="event" tabindex="0" role="button" aria-label="View details: Event Coverage">
           <span class="num">02</span>
           <div>
             <h3>Event Coverage</h3>
             <p>Photo or video coverage for events and organizations.</p>
           </div>
-          <div class="meta">STILLS / FILM<br>RATE-DEPENDENT<br>8HR EDIT</div>
+          <div class="meta">STILLS / FILM<br>RATE-DEPENDENT<br>8HR EDIT<br><span class="hint">VIEW DETAILS +</span></div>
         </div>
-        <div class="service-card">
+        <div class="service-card" data-service="shortfilm" tabindex="0" role="button" aria-label="View details: Short Film Production">
           <span class="num">03</span>
           <div>
             <h3>Short Film Production</h3>
             <p>End-to-end short film production — directing, filming, and editing a complete narrative piece.</p>
           </div>
-          <div class="meta">FILM<br>ALL DAY<br>1 WEEK MAX EDIT</div>
+          <div class="meta">FILM<br>ALL DAY<br>1 WEEK MAX EDIT<br><span class="hint">VIEW DETAILS +</span></div>
         </div>
-        <div class="service-card">
+        <div class="service-card" data-service="musicvideo" tabindex="0" role="button" aria-label="View details: Music Video Production">
           <span class="num">04</span>
           <div>
             <h3>Music Video Production</h3>
             <p>Concept-to-delivery music video production, from filming to colour-graded final edit.</p>
           </div>
-          <div class="meta">FILM<br>ALL DAY<br>2 DAYS MAX EDIT</div>
+          <div class="meta">FILM<br>ALL DAY<br>2 DAYS MAX EDIT<br><span class="hint">VIEW DETAILS +</span></div>
         </div>
-        <div class="service-card">
+        <div class="service-card" data-service="post" tabindex="0" role="button" aria-label="View details: Post-Production Only">
           <span class="num">05</span>
           <div>
             <h3>Post-Production Only</h3>
             <p>Editing and colour grading for footage or photos you've already shot.</p>
           </div>
-          <div class="meta">EDIT ONLY<br>5 HRS<br>2–3 DAYS</div>
+          <div class="meta">EDIT ONLY<br>5 HRS<br>2–3 DAYS<br><span class="hint">VIEW DETAILS +</span></div>
         </div>
       </div>
     </div>
@@ -95,6 +150,172 @@
   </section>
 </main>
 
+
+<!-- ============================================================
+     SERVICE POPUP CONTENT
+     Each <template> below is the content of one popup.
+     To change a sample: edit the src="" of the <img>, or the data-video-id="" (YouTube video ID) of a video sample.
+     ============================================================ -->
+
+<template id="tpl-portrait">
+  <span class="eyebrow">01 — Stills</span>
+  <h2>Portrait &amp; Editorial</h2>
+  <!-- 4 sample image sources: put your photos in images/services/ -->
+  <div class="svc-samples">
+    <div class="svc-sample"><img src="images/services/portrait-1.jpg" alt="Portrait sample 1" loading="lazy" onerror="this.style.background='radial-gradient(circle at 30% 30%, #ff2f6e55, transparent 55%), radial-gradient(circle at 80% 80%, #21e6ff44, transparent 55%), #151513'; this.removeAttribute('src');"><span class="cap">Portrait — 001</span></div>
+    <div class="svc-sample"><img src="images/services/portrait-2.jpg" alt="Portrait sample 2" loading="lazy" onerror="this.style.background='radial-gradient(circle at 30% 30%, #ff2f6e55, transparent 55%), radial-gradient(circle at 80% 80%, #21e6ff44, transparent 55%), #151513'; this.removeAttribute('src');"><span class="cap">Portrait — 002</span></div>
+    <div class="svc-sample"><img src="images/services/portrait-3.jpg" alt="Portrait sample 3" loading="lazy" onerror="this.style.background='radial-gradient(circle at 30% 30%, #ff2f6e55, transparent 55%), radial-gradient(circle at 80% 80%, #21e6ff44, transparent 55%), #151513'; this.removeAttribute('src');"><span class="cap">Portrait — 003</span></div>
+    <div class="svc-sample"><img src="images/services/portrait-4.jpg" alt="Portrait sample 4" loading="lazy" onerror="this.style.background='radial-gradient(circle at 30% 30%, #ff2f6e55, transparent 55%), radial-gradient(circle at 80% 80%, #21e6ff44, transparent 55%), #151513'; this.removeAttribute('src');"><span class="cap">Portrait — 004</span></div>
+  </div>
+  <p class="svc-desc">Portrait sessions on location or in a simple studio setup. Good for personal portraits, graduation shots, profile photos, and editorial-style shoots. Photos are edited in Lightroom Classic before delivery.</p>
+  <div class="svc-info"><div><span>Type</span><b>Stills</b></div><div><span>Duration</span><b>Up to 7 hrs</b></div><div><span>Editing</span><b>8 hr edit</b></div></div>
+  <div class="svc-actions">
+    <a href="contact.html?service=portrait" class="btn btn-solid">Book this service</a>
+    <a href="photography.html" class="btn btn-ghost">View more samples</a>
+  </div>
+</template>
+
+<template id="tpl-event">
+  <span class="eyebrow">02 — Stills / Film</span>
+  <h2>Event Coverage</h2>
+  <!-- 4 sample image sources: put your photos in images/services/ -->
+  <div class="svc-samples">
+    <div class="svc-sample"><img src="images/services/event-1.jpg" alt="Event sample 1" loading="lazy" onerror="this.style.background='radial-gradient(circle at 30% 30%, #ff2f6e55, transparent 55%), radial-gradient(circle at 80% 80%, #21e6ff44, transparent 55%), #151513'; this.removeAttribute('src');"><span class="cap">Event — 001</span></div>
+    <div class="svc-sample"><img src="images/services/event-2.jpg" alt="Event sample 2" loading="lazy" onerror="this.style.background='radial-gradient(circle at 30% 30%, #ff2f6e55, transparent 55%), radial-gradient(circle at 80% 80%, #21e6ff44, transparent 55%), #151513'; this.removeAttribute('src');"><span class="cap">Event — 002</span></div>
+    <div class="svc-sample"><img src="images/services/event-3.jpg" alt="Event sample 3" loading="lazy" onerror="this.style.background='radial-gradient(circle at 30% 30%, #ff2f6e55, transparent 55%), radial-gradient(circle at 80% 80%, #21e6ff44, transparent 55%), #151513'; this.removeAttribute('src');"><span class="cap">Event — 003</span></div>
+    <div class="svc-sample"><img src="images/services/event-4.jpg" alt="Event sample 4" loading="lazy" onerror="this.style.background='radial-gradient(circle at 30% 30%, #ff2f6e55, transparent 55%), radial-gradient(circle at 80% 80%, #21e6ff44, transparent 55%), #151513'; this.removeAttribute('src');"><span class="cap">Event — 004</span></div>
+  </div>
+  <p class="svc-desc">Photo or video coverage for events and organizations, such as general assemblies, programs, and org activities. I shoot what is actually happening, then edit and deliver the highlights. Rate depends on the event.</p>
+  <div class="svc-info"><div><span>Type</span><b>Stills / Film</b></div><div><span>Duration</span><b>Rate-dependent</b></div><div><span>Editing</span><b>8 hr edit</b></div></div>
+  <div class="svc-actions">
+    <a href="contact.html?service=event" class="btn btn-solid">Book this service</a>
+    <a href="photography.html" class="btn btn-ghost">View more samples</a>
+  </div>
+</template>
+
+<template id="tpl-shortfilm">
+  <span class="eyebrow">03 — Film</span>
+  <h2>Short Film Production</h2>
+  <!-- 4 sample video sources: data-video-id is the YouTube video ID (the part after v= or youtu.be/) -->
+  <div class="svc-samples video">
+    <div class="svc-sample" data-video-id="w5BFLnpUopQ"><img src="images/thumbnails/scanm.png" alt="Sca(n)(m) thumbnail" onerror="this.style.background='radial-gradient(circle at 40% 30%, #21e6ff44, transparent 55%), #141412'; this.removeAttribute('src');"><span class="play">▸</span><span class="cap">Sca(n)(m)</span></div>
+    <div class="svc-sample" data-video-id="AaJHHIVAQgI"><img src="images/thumbnails/seen-but-unheard.png" alt="Seen, but Unheard thumbnail" onerror="this.style.background='radial-gradient(circle at 40% 30%, #21e6ff44, transparent 55%), #141412'; this.removeAttribute('src');"><span class="play">▸</span><span class="cap">Seen, but Unheard</span></div>
+    <div class="svc-sample" data-video-id="nNtlU-7zKI4"><img src="images/thumbnails/ballpen.png" alt="Ballpen thumbnail" onerror="this.style.background='radial-gradient(circle at 40% 30%, #21e6ff44, transparent 55%), #141412'; this.removeAttribute('src');"><span class="play">▸</span><span class="cap">Ballpen</span></div>
+    <div class="svc-sample" data-video-id="59UjeCitW9Q"><img src="images/thumbnails/never-been-home.png" alt="Never Been Home thumbnail" onerror="this.style.background='radial-gradient(circle at 40% 30%, #21e6ff44, transparent 55%), #141412'; this.removeAttribute('src');"><span class="play">▸</span><span class="cap">Never Been Home</span></div>
+  </div>
+  <p class="svc-desc">End-to-end short film production: directing, filming, and editing a complete narrative piece. This covers advocacy films, thrillers, and school or organization projects, from concept to the final colour-graded cut.</p>
+  <div class="svc-info"><div><span>Type</span><b>Film</b></div><div><span>Duration</span><b>All day</b></div><div><span>Editing</span><b>1 week max</b></div></div>
+  <div class="svc-actions">
+    <a href="contact.html?service=shortfilm" class="btn btn-solid">Book this service</a>
+    <a href="films.html" class="btn btn-ghost">View more samples</a>
+  </div>
+</template>
+
+<template id="tpl-musicvideo">
+  <span class="eyebrow">04 — Film</span>
+  <h2>Music Video Production</h2>
+  <!-- 4 sample video sources: data-video-id is the YouTube video ID. The 4th is a placeholder, replace it with your own. -->
+  <div class="svc-samples video">
+    <div class="svc-sample" data-video-id="q1pep2Jk3nc"><img src="images/thumbnails/dream-lantern.png" alt="Dream Lantern thumbnail" onerror="this.style.background='radial-gradient(circle at 40% 30%, #21e6ff44, transparent 55%), #141412'; this.removeAttribute('src');"><span class="play">▸</span><span class="cap">Dream Lantern</span></div>
+    <div class="svc-sample" data-video-id="DgzmPIPoaE8"><img src="images/thumbnails/about-you.png" alt="About You thumbnail" onerror="this.style.background='radial-gradient(circle at 40% 30%, #21e6ff44, transparent 55%), #141412'; this.removeAttribute('src');"><span class="play">▸</span><span class="cap">About You</span></div>
+    <div class="svc-sample" data-video-id="ihn_ymYrW4E"><img src="images/thumbnails/us-as-we-are.png" alt="Us, as we are thumbnail" onerror="this.style.background='radial-gradient(circle at 40% 30%, #21e6ff44, transparent 55%), #141412'; this.removeAttribute('src');"><span class="play">▸</span><span class="cap">Us, as we are</span></div>
+    <a href="https://www.facebook.com/share/v/1C5cgMrh1o/"><img src="images/thumbnails/bestfriend.png" alt="BestFriend - ROC" onerror="this.style.background='radial-gradient(circle at 40% 30%, #21e6ff44, transparent 55%), #141412'; this.removeAttribute('src');"><span class="play">▸</span><span class="cap">BestFriend</span></div>
+  </div>
+  <p class="svc-desc">Concept-to-delivery music video production, from filming to a colour-graded final edit. Works for artists, bands, and school or org projects that need a music-driven visual.</p>
+  <div class="svc-info"><div><span>Type</span><b>Film</b></div><div><span>Duration</span><b>All day</b></div><div><span>Editing</span><b>2 days max</b></div></div>
+  <div class="svc-actions">
+    <a href="contact.html?service=musicvideo" class="btn btn-solid">Book this service</a>
+    <a href="films.html" class="btn btn-ghost">View more samples</a>
+  </div>
+</template>
+
+<template id="tpl-post">
+  <span class="eyebrow">05 — Edit only</span>
+  <h2>Post-Production Only</h2>
+  <!-- 2 sample image sources (before / after works well) -->
+  <div class="svc-samples two">
+    <div class="svc-sample"><img src="images/services/post-1.png" alt="Post-production sample 1" loading="lazy" onerror="this.style.background='radial-gradient(circle at 30% 30%, #ff2f6e55, transparent 55%), radial-gradient(circle at 80% 80%, #21e6ff44, transparent 55%), #151513'; this.removeAttribute('src');"><span class="cap">Post-production — 001</span></div>
+    <div class="svc-sample"><img src="images/services/post-2.png" alt="Post-production sample 2" loading="lazy" onerror="this.style.background='radial-gradient(circle at 30% 30%, #ff2f6e55, transparent 55%), radial-gradient(circle at 80% 80%, #21e6ff44, transparent 55%), #151513'; this.removeAttribute('src');"><span class="cap">Post-production — 002</span></div>
+  </div>
+  <p class="svc-desc">Editing and colour grading for footage or photos you've already shot. Send me your files and I'll clean them up, grade them, and return them ready to use.</p>
+  <div class="svc-info"><div><span>Type</span><b>Edit only</b></div><div><span>Duration</span><b>5 hrs</b></div><div><span>Editing</span><b>2–3 days</b></div></div>
+  <p class="svc-skills-title">What I can do</p>
+  <div class="tag-cloud" style="margin:10px 0 30px;">
+    <span class="tag-chip">Photo Editing (Lightroom Classic)</span>
+    <span class="tag-chip">Video Editing (Premiere Pro)</span>
+    <span class="tag-chip">Colour Grading (DaVinci Resolve)</span>
+    <span class="tag-chip">Motion Graphics (DaVinci Fusion)</span>
+    <span class="tag-chip">Audio Editing (Audacity)</span>
+    <span class="tag-chip">Graphics &amp; Design (Canva Pro)</span>
+  </div>
+  <div class="svc-actions">
+    <a href="contact.html?service=post" class="btn btn-solid">Book this service</a>
+  </div>
+</template>
+
+<!-- popup window (the templates above get copied in here) -->
+<div class="svc-modal" id="svcModal" aria-hidden="true">
+  <div class="svc-panel" role="dialog" aria-modal="true">
+    <button type="button" class="svc-close" id="svcClose" aria-label="Close">✕</button>
+    <div id="svcBody"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- service popups ---------- */
+var modal = document.getElementById('svcModal');
+var modalBody = document.getElementById('svcBody');
+var closeBtn = document.getElementById('svcClose');
+var cards = document.querySelectorAll('.service-card');
+
+// open the popup with the template that matches the card
+function openService(card) {
+  var key = card.getAttribute('data-service');
+  var template = document.getElementById('tpl-' + key);
+  modalBody.innerHTML = template.innerHTML;       // copy the template into the popup
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  modal.scrollTop = 0;
+  document.body.style.overflow = 'hidden';        // stop the page behind from scrolling
+}
+
+// close the popup (also clears it so any playing video stops)
+function closeService() {
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  setTimeout(function () { modalBody.innerHTML = ''; }, 300);
+}
+
+// every card opens its popup on click or on Enter / Space
+for (var i = 0; i < cards.length; i++) {
+  cards[i].addEventListener('click', function () { openService(this); });
+  cards[i].addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openService(this); }
+  });
+}
+
+closeBtn.addEventListener('click', closeService);
+// click the dark area outside the panel to close
+modal.addEventListener('click', function (e) { if (e.target === modal) closeService(); });
+// Escape key closes
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeService(); });
+
+// clicking a video sample swaps its thumbnail for the YouTube player
+modalBody.addEventListener('click', function (e) {
+  var sample = e.target.closest('[data-video-id]');
+  if (!sample) return;
+  var frame = document.createElement('iframe');
+  frame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(sample.getAttribute('data-video-id')) + '?autoplay=1&rel=0';
+  frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+  frame.allowFullscreen = true;
+  frame.title = 'Video player';
+  sample.innerHTML = '';
+  sample.appendChild(frame);
+  sample.removeAttribute('data-video-id');
+});
+</script>
+
 <footer class="site-footer">
   <div class="container">
     <div class="footer-top">
@@ -103,19 +324,6 @@
         <p style="color:var(--text-dim); font-size:14px; max-width:280px; margin-top:16px;">A minimalist photography and filmmaking studio.</p>
       </div>
       <div class="footer-cols">
-        <div class="footer-col">
-          <h4>Site</h4>
-          <a href="projects.html">Projects</a>
-          <a href="services.html">Services</a>
-          <a href="about.html">About</a>
-          <a href="skills.html">Skills</a>
-        </div>
-        <div class="footer-col">
-          <h4>Work</h4>
-          <a href="photography.html">Photography</a>
-          <a href="films.html">Films</a>
-          <a href="contact.html">Contact</a>
-        </div>
         <div class="footer-col">
           <h4>Connect</h4>
           <a href="https://www.instagram.com/heyyden.arw/" target="_blank" rel="noopener">Instagram</a>
